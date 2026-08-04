@@ -41,7 +41,8 @@ The goal is to transform raw transactional data into meaningful business insight
 
 ## 📷 Dashboard Preview
 
-(Screenshots will be added here.)
+<img width="1920" height="1080" alt="Screenshot 2026-08-03 232142" src="https://github.com/user-attachments/assets/b5499b7d-0cac-4013-8609-0365dfc40898" />
+
 
 ---
 
