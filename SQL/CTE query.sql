@@ -1,0 +1,254 @@
+-- with restaurant_revenue AS
+-- (select r.restaurant_id , r.restaurant_name , sum(o.total_amount) AS total_revenue 
+-- from restaurants r
+-- JOIN orders o
+-- ON r.restaurant_id = o.restaurant_id
+-- group by r.restaurant_id , r.restaurant_name
+-- )
+-- select restaurant_id , restaurant_name , total_revenue ,
+-- ROW_NUMBER() over(order by total_revenue DESC) AS ROW_NUM
+-- from restaurant_revenue;
+
+-- with restaurant_revenue AS
+-- (select r.restaurant_id , r.restaurant_name , sum(o.total_amount) AS total_revenue 
+-- from restaurants r
+-- JOIN orders o
+-- ON r.restaurant_id = o.restaurant_id
+-- group by r.restaurant_id , r.restaurant_name
+-- )
+-- select restaurant_id , restaurant_name , total_revenue ,
+-- RANK() over(order by total_revenue DESC) AS Ranks
+-- from restaurant_revenue;
+
+-- WITH restaurant_revenue AS
+-- (
+--     SELECT
+--         r.restaurant_id,
+--         r.restaurant_name,
+--         SUM(o.total_amount) AS total_revenue
+--     FROM restaurants r
+--     JOIN orders o
+--         ON r.restaurant_id = o.restaurant_id
+--     GROUP BY r.restaurant_id, r.restaurant_name
+-- ),
+-- restaurant_rank AS
+-- (
+--     SELECT
+--         restaurant_id,
+--         restaurant_name,
+--         total_revenue,
+--         DENSE_RANK() OVER (ORDER BY total_revenue DESC) AS revenue_rank
+--     FROM restaurant_revenue
+-- )
+
+-- SELECT
+--     restaurant_id,
+--     restaurant_name,
+--     total_revenue,
+--     revenue_rank
+-- FROM restaurant_rank
+-- WHERE revenue_rank <= 3;
+-- use flipkart_goat_sale;
+-- with highest_orders as
+-- (
+-- select o.order_id , o.customer_id , max(c.total_orders) AS total_amount
+-- from orders o
+-- JOIN customers c
+-- ON c.customer_id = o.customer_id
+-- group by o.order_id , o.customer_id
+-- )
+-- select order_id , customer_id , total_amount
+-- from highest_orders
+-- order by total_amount DESC
+-- limit 5;
+
+-- with rank_orders AS
+-- (
+-- select c.customer_id , c.name as customer_name , sum(o.total_amount) AS total_spending
+-- from customers c
+-- JOIN orders  o
+-- ON c.customer_id = o.customer_id
+-- group by c.customer_id , c.name
+-- )
+-- select customer_id , customer_name , total_spending ,
+-- rank() over(order by total_spending DESC) AS ranks
+-- from rank_orders;
+
+-- with highest_spending AS 
+-- (
+-- select c.customer_id , c.name AS customer_name , max(o.total_amount ) AS total_spending
+-- from customers c
+-- JOIN orders o
+-- ON c.customer_id = o.customer_id
+-- group by c.customer_id , c.name
+-- )
+-- select customer_id , customer_name , total_spending , 
+-- dense_rank() over(order by total_spending DESC) AS dense_ranks
+-- from highest_spending;
+
+
+-- select order_id  , customer_id , order_datetime  , total_amount,
+-- row_number() over(partition by customer_id order by order_datetime DESC) AS row_num
+-- from orders
+-- where row_num = 1;
+
+-- with latest_order AS
+-- (
+-- select customer_id, order_id , total_amount , order_datetime,
+-- row_number() over ( partition by customer_id 
+--                      order by order_datetime DESC) AS row_num
+-- from orders
+-- )
+-- select customer_id , order_id , total_amount , order_datetime 
+-- from latest_order 
+-- where row_num <= 2;
+
+-- with highest_spending as
+-- (
+-- select r.restaurant_id , r.restaurant_name , r.city_id , sum(o.total_amount) AS highest_revenue
+-- from restaurants r
+-- JOIN orders  o
+-- ON r.restaurant_id = o.restaurant_id 
+-- Group by r.restaurant_id , r.restaurant_name , r.city_id
+-- ),
+-- ranked_customers As
+-- (
+-- select restaurant_id , restaurant_name , city_id , highest_revenue, 
+-- row_number() over ( partition by restaurant_id 
+--                     order by highest_revenue DESC ) AS Row_num
+-- from highest_spending
+-- )
+-- select restaurant_id , restaurant_name, city_id , highest_revenue
+-- from ranked_customers
+-- where Row_num  = 1;
+
+-- with highest_value AS
+-- (
+-- select c.customer_id , c.name as customer_name , o.total_amount AS order_amount , o.order_id
+-- from customers c
+-- JOIN orders o
+-- ON c.customer_id = o.customer_id 
+-- group by c.customer_id , c.name , o.order_id 
+-- ),
+-- ranked_customer AS
+-- (
+-- select customer_id , customer_name , order_amount , order_id ,
+-- ROW_NUMBER() over
+-- (partition by customer_id 
+-- order by order_amount DESC) AS row_num
+-- from highest_value
+-- )
+-- select customer_id , customer_name , order_amount , order_id
+-- from ranked_customer
+-- where row_num = 1;
+
+
+-- with highest_value AS
+-- (
+-- select c.customer_id ,c.name AS customer_name ,sum(o.total_amount) AS order_amount ,o.order_id
+-- from customers c
+-- JOIN orders o
+-- ON c.customer_id = o.customer_id
+-- group by c.customer_id, c.name , o.order_id
+-- ),
+-- ranked_customer AS
+-- (
+-- select customer_id,customer_name,order_id,order_amount,
+-- ROW_NUMBER() over
+-- (partition by customer_id
+-- order by order_amount DESC) AS row_num
+-- from highest_value
+-- )
+-- select customer_id,customer_name,order_id,order_amount
+-- from ranked_customer
+-- where row_num <=3;
+
+
+-- with city_spending AS
+-- (
+-- select c.city_id , c.customer_id , c.name AS customer_name , sum(o.total_amount ) AS total_spending
+-- from customers c
+-- JOIN orders o 
+-- On c.customer_id = o.customer_id
+-- group by c.city_id , c.customer_id , c.name
+-- ),
+-- ranked_customer AS
+-- (
+-- select city_id , customer_id , customer_name , total_spending,
+-- rank() over
+--            (partition by city_id
+--            order by total_spending DESC) AS ranks
+-- from city_spending
+-- )
+-- select s.city_id , s.customer_id ,s.customer_name , s.total_spending , c.city_name
+-- from ranked_customer s
+-- JOIN cities c
+-- ON s.city_id = c.city_id
+-- where ranks =1
+-- Group by s.city_id , s.customer_id , s.customer_name , s.total_spending , c.city_name;
+
+
+-- with restaurant_revenue AS
+-- (
+-- select r.restaurant_id , r.restaurant_name , r.cuisine_type , sum(o.total_amount) AS total_spending
+-- from restaurants r
+-- JOIN orders o
+-- ON r.restaurant_id = o.restaurant_id 
+-- group by r.restaurant_id , r.restaurant_name , r.cuisine_type
+-- ),
+-- Row_numbers AS
+-- (
+-- select restaurant_id , restaurant_name , cuisine_type , total_spending,
+-- Rank() over
+--                  (partition by cuisine_type 
+--                  order by total_spending DESC) AS ranks
+-- from restaurant_revenue
+-- )
+-- select restaurant_id , restaurant_name , cuisine_type , total_spending
+-- from row_numbers 
+-- where ranks = 1;
+
+-- select order_id,customer_id,total_amount AS current_amount,order_datetime,
+-- lag(total_amount)
+-- over
+-- (partition by customer_id 
+-- order by order_datetime ) AS pervious_amount 
+-- from orders;
+
+-- select customer_id,order_id , total_amount AS current_order_amount ,
+-- LEAD(total_amount) 
+-- over
+-- (partition by customer_id 
+-- order by order_datetime ) AS Next_order
+-- from orders;
+
+-- select customer_id , order_id , total_amount AS current_amount ,
+-- LEAD(total_amount)
+-- over 
+-- (partition by customer_id 
+-- order by order_datetime) AS perviuos_amount
+-- from orders
+
+-- with orders_value AS
+-- (
+-- select customer_id , order_id , total_amount AS current_amount, order_datetime,
+-- lag(total_amount)
+-- over 
+-- (partition by customer_id 
+-- order by order_datetime) AS perviuos_amount
+-- from orders
+-- ),
+-- perviuos_value AS
+-- (
+-- select customer_id,order_id,current_amount,perviuos_amount,
+-- lag(perviuos_amount)
+-- over
+-- (partition by customer_id
+-- order by order_datetime) AS difference_amount
+-- from orders_value
+-- )
+-- select customer_id,order_id,current_amount,perviuos_amount,difference_amount
+-- from perviuos_value;
+
+
+

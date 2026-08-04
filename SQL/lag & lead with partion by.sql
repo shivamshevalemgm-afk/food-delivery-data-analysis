@@ -1,0 +1,69 @@
+-- select customer_id,order_id,order_datetime AS current_order,
+-- lag(order_datetime)
+-- over
+-- (partition by customer_id
+-- order by order_datetime) AS perviuos_order
+-- from orders;
+
+-- with order_value AS
+-- (
+-- select customer_id, order_id,order_datetime as current_order ,
+-- lag(order_datetime)
+-- over
+-- (partition by customer_id
+-- order by order_datetime) AS perviuos_order
+-- from orders
+-- )
+-- select customer_id,order_id,current_order,perviuos_order,
+-- datediff(current_order , perviuos_order) AS difference_order
+-- from order_value
+
+
+-- with order_value AS
+-- (
+-- select customer_id, order_id,order_datetime as current_order ,
+-- lead(order_datetime)
+-- over
+-- (partition by customer_id
+-- order by order_datetime) AS next_order
+-- from orders
+-- )
+-- select customer_id,order_id,current_order,next_order,
+-- datediff(next_order,current_order ) AS difference_order
+-- from order_value
+
+-- select order_id,customer_id,total_amount AS current_orderamount,
+-- first_value(total_amount)
+-- over
+-- (
+-- partition by customer_id
+-- order by order_datetime) AS first_orderamount
+-- from orders;
+
+-- select order_id,customer_id,total_amount AS current_orderamount,
+-- Last_value(total_amount)
+-- over
+-- (
+-- partition by customer_id
+-- order by order_datetime
+-- ROWS BETWEEN UNBOUNDED PRECEDING
+--          AND UNBOUNDED FOLLOWING) AS last_orderamount
+-- from orders;
+
+-- select customer_id,order_id,total_amount AS current_amount,
+-- first_value(total_amount)
+-- over
+-- (
+-- partition by customer_id 
+-- order by order_datetime) AS first_valueorder,
+-- lag(total_amount)
+-- over
+-- (
+-- partition by customer_id
+-- order by order_datetime) AS perviuos_amount,
+-- lead(total_amount)
+-- over
+-- (
+-- partition by customer_id
+-- order by order_datetime) AS next_amount
+-- from orders; 

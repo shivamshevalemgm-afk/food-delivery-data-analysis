@@ -1,0 +1,25 @@
+
+-- SELECT
+--     c.city_name,
+--     SUM(o.total_amount) AS total_revenue
+-- FROM orders o
+-- JOIN cities c
+--     ON o.city_id = c.city_id
+-- GROUP BY c.city_name
+-- ORDER BY total_revenue DESC
+-- LIMIT 5;
+
+-- SELECT
+--     r.restaurant_id,
+--     r.restaurant_name,
+--     COUNT(o.order_id) AS total_orders,
+--     ROUND(SUM(o.total_amount), 2) AS total_revenue,
+--     ROUND(AVG(o.total_amount), 2) AS average_order_value
+-- FROM restaurants r
+-- JOIN orders o
+--     ON r.restaurant_id = o.restaurant_id
+-- GROUP BY
+--     r.restaurant_id,
+--     r.restaurant_name
+-- ORDER BY total_revenue DESC
+-- LIMIT 10;
